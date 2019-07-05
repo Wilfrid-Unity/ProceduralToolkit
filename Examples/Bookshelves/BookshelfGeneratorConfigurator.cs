@@ -26,6 +26,9 @@ namespace ProceduralToolkit.Examples
         private const float minPlanksWidth = 0.03f;
         private const float maxPlanksWidth = 0.30f;
 
+        private const int minShelvesCount = 0;
+        private const int maxShelvesCount = 12;
+
         private const float platformHeight = 0.05f;
         private const float platformRadiusOffset = 0.20f;
 
@@ -56,12 +59,17 @@ namespace ProceduralToolkit.Examples
                     Generate();
                 });
             InstantiateControl<SliderControl>(leftPanel)
-                .Initialize("Planks width", minPlanksWidth, maxPlanksWidth, config.planksWidth, value =>
+                .Initialize("Planks Width", minPlanksWidth, maxPlanksWidth, config.planksWidth, value =>
                 {
                     config.planksWidth = value;
                     Generate();
                 });
-
+            InstantiateControl<SliderControl>(leftPanel)
+                .Initialize("Number of Shelves", minShelvesCount, maxShelvesCount, config.shelvesCount, value =>
+                {
+                    config.shelvesCount = value;
+                    Generate();
+                });
 #if false
             InstantiateControl<ToggleControl>(leftPanel).Initialize("Has stretchers", config.hasStretchers, value =>
             {
@@ -94,6 +102,7 @@ namespace ProceduralToolkit.Examples
                 config.internalWidth = Random.Range(minInternalWidth, maxInternalWidth);
                 config.internalDepth = Random.Range(minInternalDepth, maxInternalDepth);
                 config.planksWidth = Random.Range(minPlanksWidth, maxPlanksWidth);
+                config.shelvesCount = Random.Range(minShelvesCount, maxShelvesCount);
             }
 
             var bookshelfDraft = BookshelfGenerator.Bookshelf(config);

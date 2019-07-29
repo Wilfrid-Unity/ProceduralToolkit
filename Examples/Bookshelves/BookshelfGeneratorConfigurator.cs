@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ProceduralToolkit.Examples.UI;
 using UnityEngine;
 
@@ -8,8 +9,12 @@ namespace ProceduralToolkit.Examples
     /// </summary>
     public class BookshelfGeneratorConfigurator : ConfiguratorBase
     {
-        public MeshFilter bookshelfMeshFilter;
         public MeshFilter platformMeshFilter;
+        public MeshFilter bookshelfMeshFilter;
+        public MeshRenderer bookshelfMeshRenderer;
+        public Material bookshelfCaseMaterial;
+        public Material bookMaterial;
+
         public RectTransform leftPanel;
         public bool constantSeed = false;
         public BookshelfGenerator.Config config = new BookshelfGenerator.Config();
@@ -24,7 +29,7 @@ namespace ProceduralToolkit.Examples
         private const float maxInternalDepth = 2.00f;
 
         private const float minPlanksWidth = 0.03f;
-        private const float maxPlanksWidth = 0.30f;
+        private const float maxPlanksWidth = 0.15f;
 
         private const int minShelvesCount = 0;
         private const int maxShelvesCount = 12;
@@ -105,12 +110,28 @@ namespace ProceduralToolkit.Examples
                 config.shelvesCount = Random.Range(minShelvesCount, maxShelvesCount);
             }
 
-            var bookshelfDraft = BookshelfGenerator.Bookshelf(config);
-            AssignDraftToMeshFilter(bookshelfDraft, bookshelfMeshFilter, ref bookshelfMesh);
-
             float platformRadius = Geometry.GetCircumradius(config.internalWidth, config.internalDepth) + platformRadiusOffset;
             var platformDraft = Platform(platformRadius, platformHeight);
             AssignDraftToMeshFilter(platformDraft, platformMeshFilter, ref platformMesh);
+
+            var bookshelfDraft = BookshelfGenerator.Bookshelf(config);
+            AssignDraftToMeshFilter(bookshelfDraft, bookshelfMeshFilter, ref bookshelfMesh);
+
+            //bookshelfMeshFilter.sharedMesh = bookshelfDraft.ToMeshWithSubMeshes();
+
+            var materials = new List<Material>();
+            foreach (var draft in bookshelfDraft)
+            {
+                if (draft.name == "Bookshelf case")
+                {
+                    materials.Add(bookshelfCaseMaterial);
+                }
+                else if (draft.name == "Book")
+                {
+                    materials.Add(bookMaterial);
+                }
+            }
+            bookshelfMeshRenderer.sharedMaterials = materials.ToArray();
         }
     }
 }
